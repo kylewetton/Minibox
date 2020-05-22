@@ -1,9 +1,6 @@
 // uncomment for packing
 //import "../styles/index.scss";
 
-debug.addEventListener("click", () => {
-  console.log(m.currentlyOpen);
-});
 // Minibox is a controller class that initiates the boxes to make usage easier for the end developer
 
 class Minibox {
