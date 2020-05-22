@@ -1,5 +1,5 @@
 // uncomment for packing
-import "../styles/index.scss";
+//import "../styles/index.scss";
 
 // Minibox is a controller class that initiates the boxes to make usage easier for the end developer
 
