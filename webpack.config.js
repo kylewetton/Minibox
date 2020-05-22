@@ -8,8 +8,8 @@ module.exports = ["source-map"].map((devtool) => ({
   entry: "./src/scripts/index.js",
   output: {
     path: path.resolve(__dirname, "dist"),
-    filename: "image-compare-viewer.min.js",
-    library: "ImageCompare",
+    filename: "minibox.min.js",
+    library: "Minibox",
     libraryTarget: "umd",
     libraryExport: "default",
     umdNamedDefine: true,
@@ -24,7 +24,7 @@ module.exports = ["source-map"].map((devtool) => ({
     }),
     new Webpack.optimize.ModuleConcatenationPlugin(),
     new MiniCssExtractPlugin({
-      filename: "image-compare-viewer.min.css",
+      filename: "minibox.min.css",
     }),
   ],
   module: {

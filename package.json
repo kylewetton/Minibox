@@ -1,6 +1,6 @@
 {
   "name": "minibox",
-  "version": "0.01",
+  "version": "0.0.1",
   "description": "Easy pop-ups and modals. Lightweight, and easier to use than 'that other one'.",
   "scripts": {
     "build": "NODE_ENV=production webpack --config webpack/webpack.config.prod.js  --colors",

@@ -1,24 +1,21 @@
 // uncomment for packing
 import "../styles/index.scss";
 
-const debug = document.getElementById('debug');
-
-debug.addEventListener('click', () => {
+debug.addEventListener("click", () => {
   console.log(m.currentlyOpen);
 });
 // Minibox is a controller class that initiates the boxes to make usage easier for the end developer
 
 class Minibox {
   constructor(settings) {
-    
     const defaults = {
-      element: '.minibox',
-      trigger: '.minibox-trigger',
-      padding: '0',
-      theme: 'default',
-      crossColor: 'white'
-    }
-    
+      element: ".minibox",
+      trigger: ".minibox-trigger",
+      padding: "0",
+      theme: "default",
+      crossColor: "#222222",
+    };
+
     this.settings = Object.assign(defaults, settings);
     this.el = null;
     this.miniboxes = [];
@@ -30,8 +27,10 @@ class Minibox {
   _mount() {
     this.el = document.querySelectorAll(this.settings.element);
     this.triggers = document.querySelectorAll(this.settings.trigger);
-    
-    this.miniboxes = [...this.el].map(box => new BoxElement(box, this.settings, this));
+
+    this.miniboxes = [...this.el].map(
+      (box) => new BoxElement(box, this.settings, this)
+    );
     [...this.triggers].forEach((trigger) =>
       trigger.addEventListener("click", (e) => {
         e.preventDefault();
@@ -39,42 +38,53 @@ class Minibox {
       })
     );
   }
-  
+
   open(target = null, href = null) {
     if (this.miniboxes.length === 0) return;
-  
-    let boxToOpen = [];
-    
-    if (target) {
-      boxToOpen = this.miniboxes.filter(box => box._getTargetId() === target);
-    } else {
-      boxToOpen = this.miniboxes;  
-    }
-    
-    if (boxToOpen.length !== 0) {
-      this.currentlyOpen[0] && this.currentlyOpen[0].close();
-      this.currentlyOpen = [];
-      boxToOpen[0].open();
 
-      
-      this.currentlyOpen.push(boxToOpen[0]);
+    let boxToOpen = [];
+
+    if (href) {
+      const img = document.createElement("img");
+      img.setAttribute("src", href);
+      img.classList.add("minibox");
+      boxToOpen.push(new BoxElement(img, this.settings, this));
+    } else {
+      if (target) {
+        boxToOpen = this.miniboxes.filter(
+          (box) => box._getTargetId() === target
+        );
+      } else {
+        boxToOpen = this.miniboxes;
+      }
     }
+
+    if (boxToOpen.length !== 0) {
+      this.currentlyOpen[0] && this.currentlyOpen[0]._close();
+      this.currentlyOpen = [];
+      boxToOpen[0]._open();
+    }
+
+    this.currentlyOpen.push(boxToOpen[0]);
   }
-  
+
   close() {
-    this.currentlyOpen[0] && this.currentlyOpen[0].close();
+    this.currentlyOpen[0] && this.currentlyOpen[0]._close();
   }
-  
+
   // Used for event handling on links/buttons. Shouldn't really be called outside class
   _toggle({ target }) {
     const triggerId = target.dataset.toggle;
-    let href = triggerId === 'href' ? target.getAttribute('href') : null;
-    
-    if (this.currentlyOpen[0] && this.currentlyOpen[0]._getTargetId() === triggerId) {
-      this.currentlyOpen[0].close();
+    let href = triggerId === "href" ? target.getAttribute("href") : null;
+
+    if (
+      this.currentlyOpen[0] &&
+      this.currentlyOpen[0]._getTargetId() === triggerId
+    ) {
+      this.currentlyOpen[0]._close();
     } else {
-        this.open(triggerId, href);
-      }
+      this.open(triggerId, href);
+    }
   }
 }
 
@@ -93,24 +103,20 @@ class BoxElement {
     this._set();
   }
 
-  toggle() {
+  _toggle() {
     this.active = !this.active;
     this._set();
   }
 
-  close() {
+  _close() {
     this.controller.currentlyOpen = [];
     this.active = false;
     this._set();
   }
 
-  open() {
+  _open() {
     this.active = true;
     this._set();
-  }
-  
-  openAsImage() {
-    console.log('yeetiboi');
   }
 
   _set() {
@@ -127,16 +133,16 @@ class BoxElement {
       const wrapper = document.createElement("div");
       const inner = document.createElement("div");
 
-      wrapper.classList.add('minibox__wrapper');
+      wrapper.classList.add("minibox__wrapper");
       wrapper.style.cssText += `background: rgba(0,0,0,0.75)`;
       let that = this;
-      wrapper.addEventListener('click', function(e) { 
+      wrapper.addEventListener("click", function (e) {
         if (e.target === this) that.close();
       });
 
       inner.classList.add(`minibox__inner`, `theme-${this.settings.theme}`);
       inner.style.cssText += `padding: ${this.settings.padding}`;
- 
+
       this.appendTarget = inner;
       wrapper.appendChild(this.appendTarget);
       this.appendTarget.appendChild(this.closeButton);
@@ -146,21 +152,21 @@ class BoxElement {
     this.appendTarget.appendChild(this.el);
     document.body.appendChild(this.wrapper);
     setTimeout(() => {
-      this.appendTarget.classList.add('pop-in');
+      this.appendTarget.classList.add("pop-in");
     });
   }
 
   _removeScaffold() {
     if (this.wrapper) document.body.removeChild(this.wrapper);
-    if (this.appendTarget) this.appendTarget.classList.remove('pop-in');
+    if (this.appendTarget) this.appendTarget.classList.remove("pop-in");
   }
 
   _createCloseButton() {
-    this.closeButton.innerHTML = `<svg class="minibox__cross" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 74 74"><path d="M46.2 37l25.9-25.8a6.5 6.5 0 10-9.3-9.3L37 27.8 11.2 1.9a6.5 6.5 0 10-9.3 9.3L27.8 37 1.9 62.8a6.5 6.5 0 109.3 9.3L37 46.2l25.8 25.9a6.5 6.5 0 109.3-9.3L46.2 37z"/></svg>`;
-    
-    this.closeButton.classList.add('minibox__close');
+    this.closeButton.innerHTML = `<svg class="minibox__cross" xmlns="http://www.w3.org/2000/svg" fill="${this.settings.crossColor}" stroke="${this.settings.crossColor}" viewBox="0 0 74 74"><path d="M46.2 37l25.9-25.8a6.5 6.5 0 10-9.3-9.3L37 27.8 11.2 1.9a6.5 6.5 0 10-9.3 9.3L27.8 37 1.9 62.8a6.5 6.5 0 109.3 9.3L37 46.2l25.8 25.9a6.5 6.5 0 109.3-9.3L46.2 37z"/></svg>`;
+
+    this.closeButton.classList.add("minibox__close");
     this.closeButton.addEventListener("click", () => {
-      this.close();
+      this._close();
     });
   }
 
@@ -169,13 +175,4 @@ class BoxElement {
   }
 }
 
-// All that is required from the end developer
-
-const config = {
-  crossColor: 'white'
-}
-
-const m = new Minibox(config);
-
-
-export default ImageCompare;
+export default Minibox;

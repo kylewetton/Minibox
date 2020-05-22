@@ -39,7 +39,8 @@ p {
     position: relative;
     max-height: 100%;
     border-radius: 3px;
-    padding: 0rtrem;
+    overflow: auto;
+    padding: 0;
     transform: scale(0.9);
     transition: 0.5s cubic-bezier(.14,.68,.12,.96);
     box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
@@ -66,7 +67,6 @@ p {
     &__cross {
     opacity: 0;
     transition: 0.1s ease-out;
-    fill: white;
     width: 50%;
     flex-shrink: 0;
   }
@@ -110,7 +110,6 @@ p {
    &__inner.theme-default &__cross {
     opacity: 1;
     transition: 0.1s ease-out;
-    fill: #444444;
     width: 50%;
     transform: scale(0.9);
     flex-shrink: 0;
@@ -156,7 +155,6 @@ p {
    &__inner.theme-passive &__cross {
     opacity: 1;
     transition: 0.1s ease-out;
-    fill: white;
     width: 80%;
     transform: scale(0.9);
     flex-shrink: 0;
@@ -177,8 +175,11 @@ p {
   &__inner.theme-mac:before {
     position: relative;
     background: #eee;
-    box-shadow: 0px 1px 5px rgba(0,0,0,0.2);
     z-index: 2;
+    }
+
+    &__inner.theme-mac &__cross {
+      fill: white;
     }
   
   &__inner.theme-mac &__close {
@@ -187,7 +188,7 @@ p {
     background: #E53E3E;
     width: 15px;
     height: 15px;
-    top: calc(1rem - 6px);
+    top: calc(1rem - 7px);
     left: calc(1rem - 6px);
     padding: 0;
     line-height: 0;
