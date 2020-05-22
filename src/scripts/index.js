@@ -1,5 +1,5 @@
 // uncomment for packing
-//import "../styles/index.scss";
+import "../styles/index.scss";
 
 // Minibox is a controller class that initiates the boxes to make usage easier for the end developer
 
@@ -18,6 +18,8 @@ class Minibox {
     this.miniboxes = [];
     this.currentlyOpen = [];
     this.triggers = null;
+    this._openEvents = [];
+    this._closeEvents = [];
     this._mount();
   }
 
@@ -63,10 +65,26 @@ class Minibox {
     }
 
     this.currentlyOpen.push(boxToOpen[0]);
+
+    if (this._openEvents.length > 0) {
+      this._openEvents.forEach((event) => {
+        if (event.trigger === this.currentlyOpen[0]._getTargetId()) {
+          event.callback();
+        }
+      });
+    }
   }
 
   close() {
     this.currentlyOpen[0] && this.currentlyOpen[0]._close();
+  }
+
+  afterOpen(trigger, callback) {
+    this._openEvents.push({ trigger, callback });
+  }
+
+  afterClose(trigger, callback) {
+    this._closeEvents.push({ trigger, callback });
   }
 
   // Used for event handling on links/buttons. Shouldn't really be called outside class
@@ -106,6 +124,14 @@ class BoxElement {
   }
 
   _close() {
+    if (this.controller._closeEvents.length > 0) {
+      this.controller._closeEvents.forEach((event) => {
+        if (event.trigger === this.controller.currentlyOpen[0]._getTargetId()) {
+          event.callback();
+        }
+      });
+    }
+
     this.controller.currentlyOpen = [];
     this.active = false;
     this._set();
